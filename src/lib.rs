@@ -1,7 +1,7 @@
-use rand::random;
-use std::array;
+use getrandom::getrandom;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Vec2 {
     x: f64,
     y: f64,
@@ -13,15 +13,24 @@ impl Vec2 {
     }
 }
 
-fn main() {
-    const ARRAY_SIZE: usize = 1024;
+fn get_random_f64_raw() -> f64 {
+    let mut buf = [0u8; 8];
+    getrandom(&mut buf).unwrap();
+    f64::from_ne_bytes(buf)
+}
 
-    let mut buffer_a: [Vec2; ARRAY_SIZE] = array::from_fn(|_| Vec2 {
-        x: random::<f64>() - 0.5,
-        y: random::<f64>() - 0.5,
-    });
+#[wasm_bindgen]
+pub fn work(array_size: usize) {
 
-    let mut buffer_b: [Vec2; ARRAY_SIZE] = array::from_fn(|_| Vec2 { x: 0.0, y: 0.0 });
+
+    let mut buffer_a: Vec<Vec2> = (0..array_size)
+        .map(|_| Vec2 {
+            x: get_random_f64_raw() - 0.5,
+            y: get_random_f64_raw() - 0.5,
+        })
+        .collect();
+
+    let mut buffer_b: Vec<Vec2> = vec![Vec2 { x: 0.0, y: 0.0 }; array_size];
 
     for _ in 0..128 {
         for x in 0..1024 {

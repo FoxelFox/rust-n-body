@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script type="module">
+    import init, { work } from "./pkg/n_body.js"
+    async function main() {
+      await init();
+
+      let start = Date.now();
+      work(1024)
+
+      document.body.innerText = Date.now() - start;
+    }
+
+    main()
+
+  </script>
+
+</head>
+<body>
+
+</body>
+</html>
