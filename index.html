@@ -3,15 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <style>
+    body {
+      background-color: black;
+      color: bisque;
+    }
+  </style>
   <script type="module">
-    import init, { work } from "./pkg/n_body.js"
+
+    import init, { Simulation } from "./pkg/n_body.js"
+
     async function main() {
-      await init();
 
-      let start = Date.now();
-      work(1024)
+      const wasm = await init();
+      const memory = wasm.memory;
 
-      document.body.innerText = Date.now() - start;
+      const simulation = new Simulation(2048);
+
+      console.log(`Buffer len: ${simulation.len()}`);
+      console.log(`Buffer size per element: ${simulation.size()}`);
+      console.log(`prt: ${simulation.data_ptr()}`)
+
+      const view = new Float64Array(memory.buffer, simulation.data_ptr(), simulation.len() * simulation.size() / 4);
+      console.log(view[0], view[1], view[2], view[3]);
+
+      const s = Date.now()
+      simulation.work();
+
+      console.log(view[0], view[1], view[2], view[3]);
+      document.body.innerText = Date.now() - s
     }
 
     main()
