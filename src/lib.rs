@@ -1,12 +1,14 @@
 use rand::Rng;
 use std::mem;
+
+#[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-#[repr(C)] // Ensure a predictable C-like layout in memory (x followed by y)
+#[repr(C)]
 #[derive(Debug, Clone)]
 pub struct Vec2 {
-    x: f64,
-    y: f64,
+    pub x: f64,
+    pub y: f64,
 }
 
 impl Vec2 {
@@ -15,15 +17,15 @@ impl Vec2 {
     }
 }
 
-#[wasm_bindgen]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 pub struct Simulation {
     buffer_a: Vec<Vec2>,
     buffer_b: Vec<Vec2>,
 }
 
-#[wasm_bindgen]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Simulation {
-    #[wasm_bindgen(constructor)]
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     pub fn new(size: usize) -> Self {
         let mut rng = rand::thread_rng();
         let buffer_a: Vec<Vec2> = (0..size)
@@ -62,7 +64,6 @@ impl Simulation {
                     if x == y {
                         continue;
                     }
-                    // distance
                     let f = 1.0 / self.buffer_a[x].distance_to(&self.buffer_a[y]).powi(2);
                     self.buffer_b[x].x += (self.buffer_a[x].x - self.buffer_a[y].x) * f;
                     self.buffer_b[x].y += (self.buffer_a[x].y - self.buffer_a[y].y) * f;
@@ -71,7 +72,6 @@ impl Simulation {
                 self.buffer_b[x].y = self.buffer_a[x].y + self.buffer_b[x].y;
             }
 
-            // swap
             mem::swap(&mut self.buffer_a, &mut self.buffer_b);
         }
     }
