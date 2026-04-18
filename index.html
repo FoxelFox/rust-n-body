@@ -12,26 +12,6 @@
   <link data-trunk rel="rust" data-target-name="n_body" />
 </head>
 <body>
-  <script type="module">
-    window.addEventListener("TrunkApplicationStarted", ({ detail: { wasm } }) => {
-      const { Simulation } = window.wasmBindings;
-      const memory = wasm.memory;
 
-      const simulation = new Simulation(2048);
-
-      console.log(`Buffer len: ${simulation.len()}`);
-      console.log(`Buffer size per element: ${simulation.size()}`);
-      console.log(`ptr: ${simulation.data_ptr()}`);
-
-      const view = new Float64Array(memory.buffer, simulation.data_ptr(), simulation.len() * simulation.size() / 4);
-      console.log(view[0], view[1], view[2], view[3]);
-
-      const s = Date.now();
-      simulation.work();
-
-      console.log(view[0], view[1], view[2], view[3]);
-      document.body.innerText = Date.now() - s;
-    });
-  </script>
 </body>
 </html>

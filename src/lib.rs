@@ -3,6 +3,8 @@ use std::mem;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
+#[cfg(target_arch = "wasm32")]
+use web_sys::window;
 
 #[repr(C)]
 #[derive(Debug, Clone)]
@@ -75,4 +77,22 @@ impl Simulation {
             mem::swap(&mut self.buffer_a, &mut self.buffer_b);
         }
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(start)]
+pub fn main() {
+    let win = window().unwrap();
+    let perf = win.performance().unwrap();
+    let doc = win.document().unwrap();
+    let body = doc.body().unwrap();
+
+    let n = 2048;
+    let mut sim = Simulation::new(n);
+
+    let t0 = perf.now();
+    sim.work();
+    let elapsed = perf.now() - t0;
+
+    body.set_inner_text(&format!("{:.0} ms", elapsed));
 }
