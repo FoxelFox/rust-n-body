@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::mem;
 
-#[cfg(feature = "wasm")]
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
 #[repr(C)]
@@ -17,15 +17,15 @@ impl Vec2 {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 pub struct Simulation {
     buffer_a: Vec<Vec2>,
     buffer_b: Vec<Vec2>,
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Simulation {
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(constructor))]
     pub fn new(size: usize) -> Self {
         let mut rng = rand::thread_rng();
         let buffer_a: Vec<Vec2> = (0..size)
